@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spamdetector"
+version = "1.0.0"
+description = "Experimental message spam and article-analysis models with a FastAPI service and React UI"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Aneeza Junaid" }, { name = "Takreem Jaffery" }]
+readme = "README.md"
+
+[project.urls]
+Repository = "https://github.com/Takreem-Jaffery/Hybrid-AI-Spam-and-Misinformation-Detection"
+Issues = "https://github.com/Takreem-Jaffery/Hybrid-AI-Spam-and-Misinformation-Detection/issues"
+
+[tool.setuptools]
+packages = ["spamdetector"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = [
+  "ignore:Unknown solver options:Warning",
+  "ignore:.*httpx.*:DeprecationWarning",
+  "ignore::DeprecationWarning:starlette",
+]
+markers = ["slow: trains models on the real dataset (needs data/SMSSpamCollection)"]

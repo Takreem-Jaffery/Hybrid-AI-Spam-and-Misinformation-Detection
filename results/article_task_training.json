@@ -1,0 +1,145 @@
+{
+  "article_veracity": {
+    "task": "article_veracity",
+    "model": "TF-IDF word/character n-grams + class-weighted Logistic Regression",
+    "seed": 42,
+    "python_version": "3.10.9",
+    "scikit_learn_version": "1.6.1",
+    "dataset_manifest_sha256": "101e2d70788b2e64612a15be6d1d1bb1acfa13dd6202168f1ef4e051ca576411",
+    "model_sha256": "96dde9f4a6f15b549560fecac96dab253d98c54e17cb328dbbf93e338ba9198e",
+    "split_method": "publisher_group_holdout",
+    "train_rows": 1300,
+    "test_rows": 327,
+    "publisher_groups": 9,
+    "held_out_publishers": [
+      "abc",
+      "right-wing-news"
+    ],
+    "test_accuracy": 0.6606,
+    "test_macro_f1": 0.2632,
+    "majority_baseline_accuracy": 0.6453,
+    "majority_baseline_macro_f1": 0.1961,
+    "classification_report": {
+      "mixture of true and false": {
+        "precision": 0.5833333333333334,
+        "recall": 0.16666666666666666,
+        "f1-score": 0.25925925925925924,
+        "support": 84.0
+      },
+      "mostly false": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 25.0
+      },
+      "mostly true": {
+        "precision": 0.6778523489932886,
+        "recall": 0.957345971563981,
+        "f1-score": 0.793713163064833,
+        "support": 211.0
+      },
+      "no factual content": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 7.0
+      },
+      "accuracy": 0.6605504587155964,
+      "macro avg": {
+        "precision": 0.3152964205816555,
+        "recall": 0.2810031595576619,
+        "f1-score": 0.26324310558102304,
+        "support": 327.0
+      },
+      "weighted avg": {
+        "precision": 0.5872380600537734,
+        "recall": 0.6605504587155964,
+        "f1-score": 0.5787500158546102,
+        "support": 327.0
+      }
+    },
+    "train_label_counts": {
+      "mostly true": 1053,
+      "mixture of true and false": 128,
+      "mostly false": 62,
+      "no factual content": 57
+    },
+    "test_label_counts": {
+      "mostly true": 211,
+      "no factual content": 7,
+      "mixture of true and false": 84,
+      "mostly false": 25
+    },
+    "training_seconds": 10.7
+  },
+  "clickbait": {
+    "task": "clickbait",
+    "model": "TF-IDF word/character n-grams + class-weighted Logistic Regression",
+    "seed": 42,
+    "python_version": "3.10.9",
+    "scikit_learn_version": "1.6.1",
+    "dataset_manifest_sha256": "101e2d70788b2e64612a15be6d1d1bb1acfa13dd6202168f1ef4e051ca576411",
+    "model_sha256": "075ee96ef20649725059d5c07784c55b22dccbcf2ce439095acdb302932dd4c2",
+    "split_method": "official_validation_split",
+    "train_rows": 2459,
+    "test_rows": 19484,
+    "publisher_groups": 0,
+    "held_out_publishers": [],
+    "test_accuracy": 0.44,
+    "test_macro_f1": 0.3558,
+    "majority_baseline_accuracy": 0.4255,
+    "majority_baseline_macro_f1": 0.1492,
+    "classification_report": {
+      "considerably clickbait": {
+        "precision": 0.38065630397236616,
+        "recall": 0.58,
+        "f1-score": 0.4596454640250261,
+        "support": 3800.0
+      },
+      "heavily clickbait": {
+        "precision": 0.25210084033613445,
+        "recall": 0.06696428571428571,
+        "f1-score": 0.10582010582010581,
+        "support": 896.0
+      },
+      "not clickbait": {
+        "precision": 0.5131688383698364,
+        "recall": 0.2848568790397045,
+        "f1-score": 0.36635329045027215,
+        "support": 6498.0
+      },
+      "slightly clickbait": {
+        "precision": 0.4525332521068129,
+        "recall": 0.5376357056694813,
+        "f1-score": 0.49142731131815426,
+        "support": 8290.0
+      },
+      "accuracy": 0.4399507288031205,
+      "macro avg": {
+        "precision": 0.39961480869628746,
+        "recall": 0.3673642176058679,
+        "f1-score": 0.35581154290338957,
+        "support": 19484.0
+      },
+      "weighted avg": {
+        "precision": 0.44952002051574846,
+        "recall": 0.4399507288031205,
+        "f1-score": 0.42578339510794916,
+        "support": 19484.0
+      }
+    },
+    "train_label_counts": {
+      "considerably clickbait": 631,
+      "not clickbait": 565,
+      "slightly clickbait": 1184,
+      "heavily clickbait": 79
+    },
+    "test_label_counts": {
+      "not clickbait": 6498,
+      "considerably clickbait": 3800,
+      "slightly clickbait": 8290,
+      "heavily clickbait": 896
+    },
+    "training_seconds": 14.09
+  }
+}

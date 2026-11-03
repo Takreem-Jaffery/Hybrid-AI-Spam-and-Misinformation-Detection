@@ -1,0 +1,32 @@
+# secrets
+.env
+.env.*
+!.env.example
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+# data and models (regenerate with the scripts; DistilBERT weights go on the HF Hub)
+data/SMSSpamCollection
+data/article_tasks/
+data/*.tmp
+models/
+!models/.gitkeep
+# results: keep the generated report, ignore scratch
+results/*.tmp
+# node
+node_modules/
+dist/
+.vite/
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

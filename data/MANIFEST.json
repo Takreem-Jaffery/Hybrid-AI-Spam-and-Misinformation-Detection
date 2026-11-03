@@ -1,0 +1,9 @@
+{
+  "file": "SMSSpamCollection",
+  "source": "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip",
+  "sha256": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d",
+  "rows_loaded": 5572,
+  "ham": 4825,
+  "spam": 747,
+  "license": "CC BY 4.0 (Almeida & Hidalgo, UCI ML Repository)"
+}

@@ -1,0 +1,63 @@
+{
+  "selected": "Random Forest",
+  "selected_by": "cv",
+  "models": {
+    "Naive Bayes": {
+      "cv_f1_mean": 91.19,
+      "cv_f1_std": 0.67,
+      "test_accuracy": 97.85,
+      "test_precision": 100.0,
+      "test_recall": 83.89,
+      "test_f1": 91.24,
+      "confusion_matrix": [
+        [
+          966,
+          0
+        ],
+        [
+          24,
+          125
+        ]
+      ],
+      "seconds": 1.9
+    },
+    "Logistic Regression": {
+      "cv_f1_mean": 87.82,
+      "cv_f1_std": 1.04,
+      "test_accuracy": 97.76,
+      "test_precision": 95.59,
+      "test_recall": 87.25,
+      "test_f1": 91.23,
+      "confusion_matrix": [
+        [
+          960,
+          6
+        ],
+        [
+          19,
+          130
+        ]
+      ],
+      "seconds": 2.5
+    },
+    "Random Forest": {
+      "cv_f1_mean": 92.54,
+      "cv_f1_std": 1.49,
+      "test_accuracy": 98.21,
+      "test_precision": 100.0,
+      "test_recall": 86.58,
+      "test_f1": 92.81,
+      "confusion_matrix": [
+        [
+          966,
+          0
+        ],
+        [
+          20,
+          129
+        ]
+      ],
+      "seconds": 12.0
+    }
+  }
+}

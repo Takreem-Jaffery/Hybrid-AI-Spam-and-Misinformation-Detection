@@ -1,0 +1,9 @@
+# Only needed to train or serve DistilBERT. Install after requirements.txt.
+# Pick the torch build for your hardware from https://pytorch.org/get-started/locally/
+# (the default PyPI wheel works on CPU and, on Linux, CUDA).
+# Versions below are lower bounds, not tested pins: the DistilBERT path was only smoke-tested
+# with a tiny local model while preparing this repo. Record what you used (it is written to
+# models/distilbert/training_info.json) and tighten the pins after your first real run.
+torch>=2.2
+transformers>=4.40
+accelerate>=0.30
