@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { predict, getAdvice, reviewArticle } from './api.js'
-import { HELPLINES } from './helplines.js'
+import {
+  COUNTRY_REPORTING_RESOURCES,
+  GLOBAL_REPORTING_RESOURCES,
+  REPORTING_COUNTRIES,
+} from './helplines.js'
+import { getSupportedCountryCode } from './location.js'
 import { applyTheme } from './theme.js'
 import './styles.css'
 
@@ -37,6 +42,9 @@ export default function App() {
   const [adviceError, setAdviceError] = useState(null)
   const [adviceOpen, setAdviceOpen] = useState(false)
   const [showReport, setShowReport] = useState(false)
+  const [countryCode, setCountryCode] = useState('')
+  const [locationStatus, setLocationStatus] = useState('')
+  const [locationLoading, setLocationLoading] = useState(false)
   const [articleResult, setArticleResult] = useState(null)
   const [articleLoading, setArticleLoading] = useState(false)
   const [articleError, setArticleError] = useState(null)
@@ -44,10 +52,49 @@ export default function App() {
 
   useEffect(() => { applyTheme(theme) }, [theme])
 
+  const selectedCountry = REPORTING_COUNTRIES.find(country => country.code === countryCode)
+  const countryResources = countryCode ? COUNTRY_REPORTING_RESOURCES[countryCode] : []
+
   const clearOutputs = () => {
     setResult(null); setError(null); setAdvice(null); setAdviceError(null)
     setAdviceOpen(false); setShowReport(false)
     setArticleResult(null); setArticleError(null)
+  }
+
+  const detectCountry = () => {
+    if (!window.isSecureContext) {
+      setLocationStatus('Device-location detection requires HTTPS or localhost. Choose a country manually.')
+      return
+    }
+
+    if (!navigator.geolocation) {
+      setLocationStatus('Device location is unavailable in this browser. Choose a country manually.')
+      return
+    }
+
+    setLocationLoading(true)
+    setLocationStatus('')
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const detectedCode = getSupportedCountryCode(coords.latitude, coords.longitude)
+        const detected = REPORTING_COUNTRIES.find(country => country.code === detectedCode)
+        setCountryCode(detected?.code ?? '')
+        setLocationStatus(detected
+          ? `Detected ${detected.name}. You can change the country below.`
+          : 'This location is outside the countries currently covered. Choose a country manually.')
+        setLocationLoading(false)
+      },
+      error => {
+        const messages = {
+          1: 'Location permission was denied. Choose a country manually if you prefer.',
+          2: 'The browser could not determine your location. Choose a country manually.',
+          3: 'Location detection timed out. Try again or choose a country manually.',
+        }
+        setLocationStatus(messages[error.code] || 'Location detection failed. Choose a country manually.')
+        setLocationLoading(false)
+      },
+      { enableHighAccuracy: false, maximumAge: 60_000, timeout: 10_000 },
+    )
   }
 
   const analyze = async () => {
@@ -301,6 +348,11 @@ export default function App() {
                     </div>
                   </div>
                   <div className="model-note"><span className="model-indicator" /> MODEL <strong>{result.modelUsed}</strong><span className="score-disclaimer">Score is heuristic, not a probability.</span></div>
+                  <div className="result-report-action">
+                    <button className="report-resources-button" type="button" onClick={() => setShowReport(true)}>
+                      Find official reporting resources <span aria-hidden="true">↗</span>
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="empty-overview">
@@ -371,19 +423,88 @@ export default function App() {
             <div className="popup-backdrop" onClick={() => setShowReport(false)}>
               <div className="popup" role="dialog" aria-modal="true" aria-labelledby="report-title" onClick={e => e.stopPropagation()}>
                 <div className="popup-head">
-                  <div><div className="popup-title" id="report-title">Report spam or cyber crime</div><div className="popup-sub">Pakistan reporting channels</div></div>
-                  <button className="popup-close" onClick={() => setShowReport(false)} aria-label="Close">×</button>
+                  <div>
+                    <div className="popup-title" id="report-title">Report suspicious messages</div>
+                    <div className="popup-sub">{selectedCountry ? `${selectedCountry.name} reporting resources` : 'Choose a country for local reporting resources'}</div>
+                  </div>
+                  <button className="popup-close" type="button" onClick={() => setShowReport(false)} aria-label="Close">×</button>
                 </div>
-                {HELPLINES.map(h => (
-                  <div className="helpline" key={h.org} style={{ borderLeftColor: h.color }}>
-                    <div className="helpline-org">{h.org}</div>
-                    {h.phone && <div className="helpline-row">Phone: <a href={`tel:${h.phone}`} style={{ color: h.color }}>{h.phone}</a></div>}
-                    {h.sms && <div className="helpline-row">{h.sms}</div>}
-                    {h.url && <div className="helpline-row"><a href={h.url} target="_blank" rel="noopener noreferrer" style={{ color: h.color }}>{h.urlLabel}</a></div>}
-                    <div className="helpline-note">{h.note}</div>
+                <div className="country-picker">
+                  <label className="location-label" htmlFor="report-country">Country</label>
+                  <div className="location-controls">
+                    <select
+                      id="report-country"
+                      className="report-country-select"
+                      value={countryCode}
+                      onChange={event => {
+                        setCountryCode(event.target.value)
+                        setLocationStatus('')
+                      }}
+                    >
+                      <option value="">Select a supported country</option>
+                      {REPORTING_COUNTRIES.map(country => (
+                        <option key={country.code} value={country.code}>{country.name}</option>
+                      ))}
+                    </select>
+                    <button
+                      className="btn-secondary detect-location-button"
+                      type="button"
+                      onClick={detectCountry}
+                      disabled={locationLoading}
+                    >
+                      {locationLoading ? 'Detecting...' : 'Detect country'}
+                    </button>
+                  </div>
+                  <p className="location-privacy">
+                    Detection is optional and asks for browser permission only when clicked.
+                    Coordinates are checked locally in this browser; they are not sent to a
+                    location service, API, or saved.
+                  </p>
+                  {locationStatus && <p className="location-status" role="status">{locationStatus}</p>}
+                </div>
+
+                {selectedCountry ? (
+                  <>
+                    <div className="report-resource-heading">OFFICIAL RESOURCES FOR {selectedCountry.name.toUpperCase()}</div>
+                    {countryResources.map(resource => (
+                      <div className="helpline" key={resource.org}>
+                        <div className="helpline-org">{resource.org}</div>
+                        {resource.phone && (
+                          <div className="helpline-row">
+                            Phone: <a href={resource.phone.href}>{resource.phone.label}</a>
+                          </div>
+                        )}
+                        {resource.action && <div className="helpline-row">{resource.action}</div>}
+                        {resource.url && (
+                          <div className="helpline-row">
+                            <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                              Open official reporting page
+                            </a>
+                          </div>
+                        )}
+                        <div className="helpline-note">{resource.note}</div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <p className="location-empty">
+                    Select one of the currently supported countries or use device location. If
+                    your country is not listed, contact your local telecom provider or official
+                    cybercrime authority.
+                  </p>
+                )}
+
+                <div className="report-resource-heading">WHATSAPP REPORTING</div>
+                {GLOBAL_REPORTING_RESOURCES.map(resource => (
+                  <div className="helpline" key={resource.org}>
+                    <div className="helpline-org">{resource.org}</div>
+                    <div className="helpline-note">{resource.note}</div>
                   </div>
                 ))}
-                <div className="popup-foot">Contact details can change. Please confirm them on official websites.</div>
+                <div className="popup-foot">
+                  Sources checked 3 November 2026. Resources vary by country and may change; verify
+                  details on the official site. This directory does not submit a report for you.
+                </div>
               </div>
             </div>
           )}

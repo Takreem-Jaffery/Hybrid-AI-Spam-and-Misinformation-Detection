@@ -19,7 +19,9 @@ Writes
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import platform
 import warnings
 import pickle
 import sys
@@ -27,6 +29,9 @@ import time
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
+import scipy
+import sklearn
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -63,7 +68,9 @@ def main() -> None:
     ap.add_argument("--select-by", choices=["cv", "test"], default="cv")
     args = ap.parse_args()
 
-    split = split_dataset(load_dataset(args.data))
+    dataset_path = args.data or config.data_path()
+    dataset = load_dataset(dataset_path)
+    split = split_dataset(dataset)
     print(f"train={len(split.X_train)}  test={len(split.X_test)}  (spam share {split.y_train.mean():.1%})")
 
     out_dir = config.classical_dir()
@@ -103,8 +110,42 @@ def main() -> None:
     config.pipeline_meta_path().write_text(json.dumps({"model": best, "selected_by": args.select_by, "seed": config.SEED}, indent=2) + "\n")
 
     config.results_dir().mkdir(parents=True, exist_ok=True)
+    result_metadata = {
+        "dataset": {
+            "file": dataset_path.name,
+            "sha256": hashlib.sha256(dataset_path.read_bytes()).hexdigest(),
+            "rows": len(dataset),
+        },
+        "split": {
+            "method": "stratified_random",
+            "seed": config.SEED,
+            "test_size": config.TEST_SIZE,
+            "train_rows": len(split.X_train),
+            "test_rows": len(split.X_test),
+            "test_label_counts": {
+                "ham": int((split.y_test == 0).sum()),
+                "spam": int((split.y_test == 1).sum()),
+            },
+        },
+        "environment": {
+            "python": platform.python_version(),
+            "numpy": np.__version__,
+            "pandas": pd.__version__,
+            "scipy": scipy.__version__,
+            "scikit_learn": sklearn.__version__,
+        },
+    }
     (config.results_dir() / "classical_training.json").write_text(
-        json.dumps({"selected": best, "selected_by": args.select_by, "models": report}, indent=2) + "\n"
+        json.dumps(
+            {
+                **result_metadata,
+                "selected": best,
+                "selected_by": args.select_by,
+                "models": report,
+            },
+            indent=2,
+        )
+        + "\n"
     )
     print(f"Saved {config.pipeline_path()}")
     print("Next: python scripts/train_distilbert.py   (GPU recommended)   or   python scripts/evaluate.py")

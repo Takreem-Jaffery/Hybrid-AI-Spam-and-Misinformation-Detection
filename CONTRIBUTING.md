@@ -2,13 +2,14 @@
 
 ## Development checks
 
-Use Python 3.10+ and Node.js 22.12+. Install the backend development requirements with
+Use Python 3.10+ and Node.js 22.13+. Install the backend development requirements with
 `python -m pip install -r requirements-dev.txt`, then run:
 
 ```text
 python -m pytest -q
 cd frontend
 npm ci
+npm test
 npm run lint
 npm run build
 ```

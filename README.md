@@ -18,11 +18,11 @@ fine-tuned DistilBERT. Served by a FastAPI backend and React UI.
 | `scripts/` | dataset downloaders, CPU training scripts, `train_distilbert.py`, and evaluation |
 | `frontend/` | React 19 + Vite UI |
 | `tests/` | Fast API/model tests plus a dataset-backed classical-model reproducibility test |
-| `docs/` | Implementation history and document-sharing guidance |
+| `docs/` | Implementation history, reporting-resource sources, and research roadmap |
 
 ## Quick start
 
-Requires Python 3.10+ and Node.js 22.12+. The examples below use PowerShell; activate the
+Requires Python 3.10+ and Node.js 22.13+. The examples below use PowerShell; activate the
 virtual environment with `source .venv/bin/activate` on macOS/Linux.
 
 ```powershell
@@ -54,6 +54,7 @@ uvicorn spamdetector.api:app --port 8000
 # terminal 2: UI
 cd frontend
 npm ci
+npm test
 npm run dev                                     # http://localhost:5173
 ```
 
@@ -75,6 +76,17 @@ cp .env.example .env                 # PowerShell: Copy-Item .env.example .env
 ```
 
 The key lives only on the server. The browser calls `POST /advice`, never Groq directly.
+
+### Reporting resources and location privacy
+
+The message result includes official reporting resources for eleven initially supported
+countries. Users can choose a country manually or click **Detect country** in the reporting
+panel, which requests browser geolocation permission only after that explicit action. Coordinates
+are matched locally against bundled country boundaries; they are not sent to an IP/geocoding
+service, backend, or saved. Detection requires a secure context (HTTPS or localhost), and manual
+selection remains available when permission is denied or a country is not covered. The directory
+is a curated starter set, not a complete worldwide help service; see
+[`docs/REPORTING_RESOURCES.md`](docs/REPORTING_RESOURCES.md).
 
 ## API
 
@@ -104,7 +116,7 @@ The score is not a calibrated probability.
 
 ## Results
 
-Same stratified 80/20 split everywhere (seed 42; 4,457 train / 1,115 test; 13.4 % spam).
+Evaluation uses a stratified 80/20 split (seed 42; 4,457 train / 1,115 test; 13.4% spam).
 
 | Model | Accuracy | Precision | Recall | F1 | Source |
 |---|---|---|---|---|---|
@@ -112,11 +124,11 @@ Same stratified 80/20 split everywhere (seed 42; 4,457 train / 1,115 test; 13.4 
 | Logistic Regression | 97.76 % | 95.59 % | 87.25 % | 91.23 % | current saved run |
 | Random Forest | 98.21 % | 100.0 % | 86.58 % | 92.81 % | selected by training-only CV; current saved run |
 
-These results use the same stratified 80/20 split (seed 42; 4,457 train / 1,115 test; 13.4%
-spam) and are recorded in `results/classical_training.json`. The slow test checks the Random
-Forest baseline against the current run. Older notebook and report values are not treated as
-reproduced results. DistilBERT and ensemble figures are omitted until the current pipeline is
-run and its outputs are saved and reviewed.
+The results are recorded in `results/classical_training.json`, including dataset and environment
+metadata. The slow test checks the Random Forest baseline against the pinned numerical stack in
+`requirements.txt`. Older notebook and report values are not treated as reproduced results.
+DistilBERT and ensemble figures are omitted until the current pipeline is run and its outputs
+are saved and reviewed.
 
 The first article-task CPU baseline (Python 3.10.9, scikit-learn 1.6.1, seed 42) achieved:
 
@@ -137,7 +149,8 @@ metrics, splits, dataset-manifest hash, and versions.
 - **Test set:** 1,115 messages with 149 spam. One message changes recall by about 0.7 points; differences of a point or two between models are within noise (`evaluate.py` reports bootstrap intervals).
 - **Metadata rules:** "forwarded" and "unknown sender" add fixed points to the score. No data supports those exact weights.
 - **The LLM advisor** can be wrong and is not part of the model's accuracy.
-- **Reporting contacts** (`frontend/src/helplines.js`) were cross-checked on 2026-10-30 but can change; confirm on the official sites.
+- **Reporting resources** (`frontend/src/helplines.js`) cover eleven jurisdictions and were checked on 2026-11-03. Some official portals were unavailable during checking; confirm current instructions before relying on them.
+- **Location detection** only chooses a reporting-resource country. It does not determine legal jurisdiction, and the bundled small-scale map may not resolve border locations precisely.
 - **Dataset quirk:** UCI's file has 5,574 lines, but pandas' default parser yields 5,572 rows. We keep it so results match the original; see `spamdetector/data.py`.
 
 ## Reproducibility

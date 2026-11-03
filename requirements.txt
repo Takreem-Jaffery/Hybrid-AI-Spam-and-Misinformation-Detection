@@ -1,7 +1,8 @@
 # Core install: data, classical models, API, evaluation, tests. No PyTorch needed.
 scikit-learn==1.6.1
-numpy>=1.26,<3
-pandas>=2.2,<4
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.15.3
 fastapi>=0.111,<1
 uvicorn[standard]>=0.29
 pydantic>=2.7,<3

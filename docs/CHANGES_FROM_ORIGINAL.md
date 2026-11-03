@@ -23,7 +23,7 @@ What was carried over unchanged: the dataset and 80/20 stratified split (seed 42
 ## Reproducibility and engineering
 - One config module, env-overridable paths; scripts replace notebook cells; dataset download with validation and sha256 manifest.
 - Dataset quirk documented (5,574 lines vs 5,572 parsed rows).
-- Test suite (fast synthetic/API checks and a dataset-backed reproducibility check), CI for backend and frontend.
+- Test suite (fast synthetic/API checks and a dataset-backed reproducibility check), Python-version CI for backend and frontend.
 - Evaluation script: all models on one split, bootstrap F1 intervals, PR/calibration plots, ensemble weight sensitivity sweep.
 
 ## Known gaps

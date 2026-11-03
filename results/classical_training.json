@@ -1,4 +1,27 @@
 {
+  "dataset": {
+    "file": "SMSSpamCollection",
+    "sha256": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d",
+    "rows": 5572
+  },
+  "split": {
+    "method": "stratified_random",
+    "seed": 42,
+    "test_size": 0.2,
+    "train_rows": 4457,
+    "test_rows": 1115,
+    "test_label_counts": {
+      "ham": 966,
+      "spam": 149
+    }
+  },
+  "environment": {
+    "python": "3.10.9",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.15.3",
+    "scikit_learn": "1.6.1"
+  },
   "selected": "Random Forest",
   "selected_by": "cv",
   "models": {
@@ -19,7 +42,7 @@
           125
         ]
       ],
-      "seconds": 1.9
+      "seconds": 2.5
     },
     "Logistic Regression": {
       "cv_f1_mean": 87.82,
@@ -57,7 +80,7 @@
           129
         ]
       ],
-      "seconds": 12.0
+      "seconds": 15.0
     }
   }
 }
