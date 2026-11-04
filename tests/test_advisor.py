@@ -1,3 +1,5 @@
+import json
+
 import httpx
 import pytest
 
@@ -31,6 +33,7 @@ def test_prompt_wraps_untrusted_message_and_strips_the_closing_tag():
 async def test_request_advice_with_mock_transport():
     def handler(req: httpx.Request) -> httpx.Response:
         assert req.headers["authorization"] == "Bearer k"
+        assert json.loads(req.content)["model"] == advisor.DEFAULT_MODEL
         return httpx.Response(200, json={"choices": [{"message": {"content": GOOD}}]})
 
     async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as c:

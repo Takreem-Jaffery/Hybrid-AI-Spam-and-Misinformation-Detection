@@ -386,7 +386,7 @@ export default function App() {
                 }}
               >
                 <span className="groq-icon" aria-hidden="true">✳</span>
-                <span className="groq-heading-copy"><strong>AI Security Advisor</strong><small>Optional analysis powered by Groq · LLaMA</small></span>
+                <span className="groq-heading-copy"><strong>AI Security Advisor</strong><small>Optional analysis powered by Groq</small></span>
                 <span className="groq-get">{adviceOpen ? 'CLOSE' : advice ? 'VIEW ADVICE' : 'GET ADVICE'} <b>↗</b></span>
               </button>
 

@@ -87,7 +87,7 @@ choose **Get advice**. The backend recomputes the local verdict and sends Groq:
 - the full message text, up to 500 characters in the UI;
 - the local Spam/Benign label, rounded spam score, risk tier, and detected-signal reasons
   (including forwarded/unknown-sender context when applicable);
-- the configured model name (defaults to `llama-3.1-8b-instant`) and generation settings
+- the configured model name (defaults to `qwen/qwen3.8-27b`) and generation settings
   (`temperature: 0.3`, `max_tokens: 400`).
 
 It does not send article text, selected country, or device coordinates to Groq. The API key is
