@@ -4,7 +4,7 @@ Paste a message for a spam assessment, or review an article against separate his
 and headline-clickbait models. The message scanner uses a TF-IDF classifier and optional
 fine-tuned DistilBERT. Served by a FastAPI backend and React UI.
 
-**Authors:** Takreem Jaffery and Aneeza Junaid.
+**Maintainer:** Takreem Jaffery.
 
 ![CI](https://github.com/Takreem-Jaffery/Hybrid-AI-Spam-and-Misinformation-Detection/actions/workflows/ci.yml/badge.svg?branch=main)
 
@@ -70,12 +70,43 @@ python scripts/evaluate.py           # all models, same test split -> results/
 
 ### Add the AI advisor (optional)
 
-```bash
-cp .env.example .env                 # PowerShell: Copy-Item .env.example .env
-# put your key in GROQ_API_KEY=...   (get one at console.groq.com)
+From the repository root, copy the **root** template:
+
+```powershell
+Copy-Item .env.example .env
 ```
 
-The key lives only on the server. The browser calls `POST /advice`, never Groq directly.
+Then edit `.env` in the repository root and set `GROQ_API_KEY=your_key_here`. Get the key from
+[Groq Console](https://console.groq.com/). Keep it out of source control; `.env` is ignored by
+Git. Restart the API after changing it. The separate `frontend/.env.example` is only for an
+optional API URL and is not where the Groq key belongs.
+
+The browser sends an optional `POST /advice` request to this project's backend only when you
+choose **Get advice**. The backend recomputes the local verdict and sends Groq:
+
+- the full message text, up to 500 characters in the UI;
+- the local Spam/Benign label, rounded spam score, risk tier, and detected-signal reasons
+  (including forwarded/unknown-sender context when applicable);
+- the configured model name (defaults to `llama-3.1-8b-instant`) and generation settings
+  (`temperature: 0.3`, `max_tokens: 400`).
+
+It does not send article text, selected country, or device coordinates to Groq. The API key is
+sent to Groq in the server-to-server authorization header; it is not exposed to the browser.
+Review Groq's current data-use terms before sending sensitive or third-party messages.
+
+The prompt is implemented in [`spamdetector/advisor.py`](spamdetector/advisor.py). Its system
+instruction says to assess the message as untrusted data and not follow instructions inside it.
+The user prompt asks for exactly these JSON fields: a one-sentence verdict; 2–3 sentences of
+reasoning tied to message signals; three practical, message-specific actions; and a reporting
+destination for spam (or null for benign). It says not to call a locally benign message spam,
+and to treat likely legitimate OTP/bank notifications cautiously. The backend parses the JSON
+shape and forces `report_to` to null for benign predictions, but it does not verify the advice
+against evidence or validate whether a suggested reporting destination is correct.
+
+This is not source-grounded or independently fact-checked advice: the model may misread a
+message, miss context, or invent a reporting destination. The prompt does not give Groq the
+user's country. Treat the response as optional guidance, not a security determination; use the
+separate curated official reporting-resource directory for reporting links.
 
 ### Reporting resources and location privacy
 
@@ -183,3 +214,7 @@ a deterministic stratified random split. Reports are written under `models/artic
 `results/article_task_training.json`. A group holdout is not a substitute for testing on current
 news, and scores are not calibrated probabilities of factual truth. Current evidence search is
 not implemented; Article Review is local/offline.
+
+## Acknowledgements
+
+With appreciation to Aneeza Junaid for her contributions to the original project.

@@ -5,7 +5,5 @@ version: 1.0.0
 authors:
   - family-names: Jaffery
     given-names: Takreem
-  - family-names: Junaid
-    given-names: Aneeza
 license: MIT
 repository-code: "https://github.com/Takreem-Jaffery/Hybrid-AI-Spam-and-Misinformation-Detection"

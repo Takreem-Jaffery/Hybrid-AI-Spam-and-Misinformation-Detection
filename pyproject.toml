@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Experimental message spam and article-analysis models with a FastAPI service and React UI"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Aneeza Junaid" }, { name = "Takreem Jaffery" }]
+authors = [{ name = "Takreem Jaffery" }]
 readme = "README.md"
 
 [project.urls]
