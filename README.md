@@ -66,6 +66,7 @@ Without trained article models, Article Review displays an explicit unavailable 
 pip install -r requirements-transformer.txt
 python scripts/train_distilbert.py   # ~8 min on a Colab T4, hours on CPU
 python scripts/evaluate.py           # all models, same test split -> results/
+python scripts/evaluate_grouped.py   # nested exact-text-grouped SMS baseline -> results/
 ```
 
 ### Add the AI advisor (optional)
@@ -160,6 +161,21 @@ metadata. The slow test checks the Random Forest baseline against the pinned num
 `requirements.txt`. Older notebook and report values are not treated as reproduced results.
 DistilBERT and ensemble figures are omitted until the current pipeline is run and its outputs
 are saved and reviewed.
+
+The separate grouped evaluation keeps identical preprocessed texts on one side of its outer
+holdout and inner model-selection folds. It does not overwrite the historical random-split results
+or the deployed model. Dataset source vetting, label definitions, and the known exact-duplicate
+leakage are documented in [the dataset review](docs/DATASET_REVIEW.md).
+
+| Experiment | Holdout | Accuracy | Precision | Recall | F1 |
+|---|---|---:|---:|---:|---:|
+| Nested grouped 5-fold; model selected independently per fold | Exact-text groups; all rows held out once | 97.74 ± 0.22 % | 99.35 ± 1.00 % | 83.49 ± 2.59 % | 90.70 ± 1.58 % |
+
+These are mean ± population standard deviation across five outer folds. Grouped inner CV selected
+Random Forest in folds 1, 3, and 5, and Naive Bayes in folds 2 and 4. No exact-text groups
+overlapped between training and test rows in any fold. This is still an evaluation on the older
+English SMS corpus, not a WhatsApp or recent-message benchmark. The run is saved in
+`results/grouped_baseline.json` (`experiment`: `nested_grouped_exact_text_five_fold`).
 
 The first article-task CPU baseline (Python 3.10.9, scikit-learn 1.6.1, seed 42) achieved:
 
