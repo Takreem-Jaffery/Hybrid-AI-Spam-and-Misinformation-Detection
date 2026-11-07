@@ -69,3 +69,8 @@ environment, command, and saved evaluation output. Separate measured results fro
 Do not retain earlier report claims about unimplemented datasets, transformer runs, WhatsApp
 integration, or high hybrid accuracy unless those experiments are independently reproduced with
 valid held-out evaluation.
+
+The candidate-source audit and current exact-text leakage measurement are recorded in
+[`DATASET_REVIEW.md`](DATASET_REVIEW.md). Run `python scripts/evaluate_grouped.py` for a separate
+nested, exact-text-grouped SMS baseline; do not compare it as if it were the same split as the
+historical random-split result.
