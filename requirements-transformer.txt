@@ -4,6 +4,6 @@
 # Versions below are lower bounds, not tested pins: the DistilBERT path was only smoke-tested
 # with a tiny local model while preparing this repo. Record what you used (it is written to
 # models/distilbert/training_info.json) and tighten the pins after your first real run.
-torch>=2.2
-transformers>=4.40
-accelerate>=0.30
+torch>=2.14.1
+transformers>=5.20.2
+accelerate>=1.15.0
